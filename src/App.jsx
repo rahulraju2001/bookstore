@@ -23,16 +23,16 @@ function App() {
 
   setTimeout(() => {
     setIsLoading(false);
-  }, 6000);
+  }, 3000);
 
   return (
     <>
       <Routes>
-        <Route path="/" element={ isLoading? <Preloader/> : <Home />} />
+        <Route path="/" element={isLoading ? <Preloader /> : <Home />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/books" element={<Books />} />
         <Route path="/login" element={<Auth />} />
-        <Route path="/register" element={<Auth insideRegister/>} />
+        <Route path="/register" element={<Auth insideRegister />} />
 
         <Route path="/profile/:id" element={<Profile />} />
         <Route path="/books/:id" element={<View />} />
@@ -49,5 +49,3 @@ function App() {
 }
 
 export default App;
-
-
