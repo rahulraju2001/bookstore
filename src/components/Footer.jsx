@@ -17,10 +17,7 @@ function Footer() {
             amet consectetur adipisicing elit. Explicabo dolor esse ipsum,
             temporibus quos quis magnam incidunt corrupti placeat aliquid,
             dolorum, sequi rerum maiores nisi saepe inventore autem itaque quia?
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium
-            ad hic fuga architecto commodi soluta expedita minima dolore alias
-            ducimus minus rem eveniet tempore, impedit quos vero aliquid dolores
-            numquam.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit.
           </p>
         </div>
         <div>
