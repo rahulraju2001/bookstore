@@ -2,6 +2,9 @@ import { FaCheckCircle } from "react-icons/fa"
 import Header from "../components/Header"
 import { useState } from "react"
 import Edit from '../components/Edit'
+import UploadBook from "../components/UploadBook"
+import BookStatus from "../components/BookStatus"
+import Purchase from "../components/Purchase"
 
 function Profile() {
   const [currentTab,setCurrentTab] = useState(1)
@@ -21,6 +24,7 @@ function Profile() {
           <Edit/>
         </div>
       </div>
+      <p className="text-xl font-bold px-20 mt-5">Bio</p>
       <p className="text-justify md:px-20 px-5 my-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat porro est rerum delectus nam voluptatum expedita asperiores rem cupiditate itaque voluptatibus consectetur aspernatur aliquam quo facilis architecto provident, et nemo!</p>
       <div className="md:px-40">
         {/* tabs */}
@@ -32,15 +36,15 @@ function Profile() {
         {/* tab content */}
         {
           currentTab==1 &&
-            <div>Upload Book</div>
+            <div><UploadBook/></div>
         }
         {
           currentTab==2 &&
-            <div>Upload Book Status</div>
+            <div><BookStatus/></div>
         }
         {
           currentTab==3 &&
-            <div>Purchase History</div>
+            <div><Purchase/></div>
         }
       </div>
     </>
