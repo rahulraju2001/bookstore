@@ -1,10 +1,33 @@
-import { useState } from "react";
-import { FaFacebook, FaInstagram, FaTwitter, FaUser } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaTwitter,
+  FaUser,
+  FaPowerOff,
+} from "react-icons/fa";
+import { FaGear } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import axiosInstance from '../../api/axiosInstance'
 
 function Header() {
   const [toggle, setToggle] = useState(false);
+  const [token, setToken] = useState("");
+  const [dp, setDp] = useState("");
+  const [userId, setUserId] = useState("");
+  const [dropDown, setDropDown] = useState(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("token") && sessionStorage.getItem("user")) {
+      const userToken = sessionStorage.getItem("token");
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      setToken(userToken);
+      setDp(user.picture);
+      setUserId(user._id);
+    }
+  }, [token]);
+
   return (
     <>
       {/* Header top part */}
@@ -18,6 +41,7 @@ function Header() {
             alt="BOOKS"
           />
         </div>
+        {/* title */}
         <div className="md:flex justify-center items-center hidden">
           <h1 className="text-3xl font-bold ms-2">BOOKSTORE</h1>
         </div>
@@ -25,13 +49,50 @@ function Header() {
           <FaInstagram />
           <FaTwitter className="mx-2" />
           <FaFacebook />
-          <Link
-            to={"/login"}
-            className="border border-black rounded px-3 ms-3 flex items-center"
-          >
-            {" "}
-            <FaUser className="me-1" /> Login{" "}
-          </Link>
+          {/* login Link */}
+          {!token ? (
+            <Link
+              to={"/login"}
+              className="border border-black rounded px-3 ms-3 flex items-center"
+            >
+              {" "}
+              <FaUser className="me-1" /> Login{" "}
+            </Link>
+          ) : (
+            <div>
+              <button
+                onClick={() => setDropDown(!dropDown)}
+                className="shadow-sm rounded p-1 hover:bg-gray-100"
+              >
+                <img
+                  width={"40px"}
+                  height={"40px"}
+                  style={{ borderRadius: "50%" }}
+                  src={
+                    dp == ""
+                      ? "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
+                      : dp.startsWith("https://1h3.googleusercontent.com/")?dp : `${axiosInstance.defaults.baseURL}/uploads/${dp}`
+                  }
+                  alt="profile icon"
+                />
+              </button>
+              {/* dropdown menu */}
+              {dropDown && (
+                <div className="absolute right-0 z-10 mt-2 w-40 bg-white shadow rounded ring-1 ring-black/5 p-2 focus:outline-hidden">
+                  <Link
+                    to={"/profile/${userId}"}
+                    className="flex items-center text-gray-600 text-sm px-3 py-2"
+                  >
+                    <FaGear className="me-1" /> Profile
+                  </Link>
+                  <button className="flex items-center text-gray-600 text-sm px-3 py-2">
+                    <FaPowerOff className="me-1" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
       {/* Navigation part */}
@@ -41,13 +102,49 @@ function Header() {
           <button onClick={() => setToggle(!toggle)}>
             <IoMenu />
           </button>
-          <Link
-            to={"/login"}
-            className="border border-black rounded px-3 ms-3 flex items-center hover:bg-white hover:text-black"
-          >
-            {" "}
-            <FaUser className="ms-1" /> Login
-          </Link>
+          {!token ? (
+            <Link
+              to={"/login"}
+              className="border border-black rounded px-3 ms-3 flex items-center hover:bg-white hover:text-black"
+            >
+              {" "}
+              <FaUser className="ms-1" /> Login
+            </Link>
+          ) : (
+            <div>
+              <button
+                onClick={() => setDropDown(!dropDown)}
+                className="shadow-sm rounded p-1 hover:bg-gray-100"
+              >
+                <img
+                  width={"40px"}
+                  height={"40px"}
+                  style={{ borderRadius: "50%" }}
+                  src={
+                    dp == ""
+                      ? "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
+                      : dp.startsWith("https://1h3.googleusercontent.com/")?dp : `${axiosInstance.defaults.baseURL}/uploads/${dp}`
+                  }
+                  alt="profile icon"
+                />
+              </button>
+              {/* dropdown menu */}
+              {dropDown && (
+                <div className="absolute right-0 z-10 mt-2 w-40 bg-white shadow rounded ring-1 ring-black/5 p-2 focus:outline-hidden">
+                  <Link
+                    to={"/profile/${userId}"}
+                    className="flex items-center text-gray-600 text-sm px-3 py-2"
+                  >
+                    <FaGear className="me-1" /> Profile
+                  </Link>
+                  <button className="flex items-center text-gray-600 text-sm px-3 py-2">
+                    <FaPowerOff className="me-1" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <ul className={toggle ? "flex flex-col" : "md:flex hidden"}>
           <li>
