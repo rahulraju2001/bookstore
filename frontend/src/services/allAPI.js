@@ -14,3 +14,38 @@ export const loginAPI = async (userData) => {
 export const googleLoginAPI = async (userData) => {
   return await apiService("POST", "/google-login", userData);
 };
+
+//edit user api: called by edit component when edit button is clicked
+export const userUpdateAPI = async (userId,userData) => {
+  return await apiService("PUT", `/user/${userId}`, userData);
+};
+
+//add book api: called by uploadBook component when add button is clicked
+export const addBookAPI = async (bookDetails) => {
+  return await apiService("POST", `/book`, bookDetails);
+};
+
+//get home book api: home component when page loads
+export const getHomeBooksAPI = async () => {
+  return await apiService("GET", `/home-books`,{});
+};
+
+//get all book api: book component when page loads
+export const getAllBooksAPI = async () => {
+  return await apiService("GET", `/all-books`,{});
+};
+
+//get user book api: BookStatus component when it opens
+export const getUserBooksAPI = async () => {
+  return await apiService("GET", `/user-books`,{});
+};
+
+//get user bought book api: Book component when it opens
+export const getUserBoughtBooksAPI = async () => {
+  return await apiService("GET", `/bought-books`,{});
+};
+
+//delete user uploaded books api: bookStatus component when click on delete button
+export const deleteUserBookAPI = async (bookId) => {
+  return await apiService("DELETE", `/book/${bookId}`,{});
+};

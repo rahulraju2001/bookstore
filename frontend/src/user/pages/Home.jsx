@@ -1,8 +1,26 @@
 import { FaSearch } from "react-icons/fa";
 import Header from "../components/Header";
 import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { getHomeBooksAPI } from "../../services/allAPI";
+import { searchContext } from "../../contextAPI/ShareContext";
 
 function Home() {
+  const {searchKey,setSearchKey} = useContext(searchContext)
+  const [homeBooks, setHomeBooks] = useState([]);
+  console.log(searchKey);
+
+  const getHomeBooks = async () => {
+    const result = await getHomeBooksAPI();
+    if (result.status == 200) {
+      setHomeBooks(result.data);
+    }
+  };
+
+  useEffect(() => {
+    getHomeBooks();
+  }, []);
+
   return (
     <>
       <Header />
@@ -19,6 +37,7 @@ function Home() {
           <p>Gift your family and friends a book</p>
           <div>
             <input
+              onChange={(e)=>setSearchKey(e.target.value)}
               type="text"
               placeholder="Search a Book"
               className="bg-white p-2 rounded-3xl w-100 text-black mt-2"
@@ -36,19 +55,25 @@ function Home() {
         <h1 className="text-3xl my-2">Explore Our Latest Collections</h1>
         <div className="md:grid grid-cols-4 md:my-0">
           {/* Duplicating Card */}
-          <div className="shadow rounded p-3 m-4 md:my-0">
-            <img
-              width={"100%"}
-              height={"300px"}
-              src="https://blog-cdn.reedsy.com/directories/gallery/248/large_65b0ae90317f7596d6f95bfdd6131398.jpg"
-              alt=""
-            />
-            <div className="flex flex-col justify-center items-center mt-4">
-              <h2 className="text-blue-950 font-bold text-xl">Author</h2>
-              <h3 className="text-lg">Title</h3>
-              <p className="font-bold text-red-950">Price</p>
-            </div>
-          </div>
+          {homeBooks.length > 0 ? (
+            homeBooks.map((book) => (
+              <div key={book?._id} className="shadow rounded p-3 m-4 md:my-0">
+                <img
+                  width={"100%"}
+                  height={"300px"}
+                  src={book?.imageURL}
+                  alt=""
+                />
+                <div className="flex flex-col justify-center items-center mt-4">
+                  <h2 className="text-blue-950 font-bold text-xl">{book?.author}</h2>
+                  <h3 className="text-lg">{book?.title}</h3>
+                  <p className="font-bold text-red-950">${book?.discountPrice}</p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="font-bold text-center my-3">Loading.....</p>
+          )}
         </div>
         {/* Button */}
         <div className="text-center my-10">
@@ -98,9 +123,22 @@ function Home() {
         <h1>TESTIMONIALS</h1>
         <h1>See What Others Are Saying</h1>
         <div className="my-5 flex flex-col justify-center items-center">
-          <img width={'200px'} height={'200px'} style={{borderRadius:'50%'}} src="https://static.vecteezy.com/system/resources/thumbnails/042/055/246/small/ai-generated-businessman-portrait-portrait-of-businessman-png.png" alt="" />
+          <img
+            width={"200px"}
+            height={"200px"}
+            style={{ borderRadius: "50%" }}
+            src="https://static.vecteezy.com/system/resources/thumbnails/042/055/246/small/ai-generated-businessman-portrait-portrait-of-businessman-png.png"
+            alt=""
+          />
           <h3 className="my-3">Luca King</h3>
-          <p className="text-justify">This bookstore has completely changed the way I discover new books. The recommendations are always spot-on, and the delivery is super fast. I love the clean interface and the huge collection! The user experience is amazing! Easy navigation, great deals, and beautifully organized categories. I appreciate how quickly customer support responds too.</p>
+          <p className="text-justify">
+            This bookstore has completely changed the way I discover new books.
+            The recommendations are always spot-on, and the delivery is super
+            fast. I love the clean interface and the huge collection! The user
+            experience is amazing! Easy navigation, great deals, and beautifully
+            organized categories. I appreciate how quickly customer support
+            responds too.
+          </p>
         </div>
       </section>
     </>
