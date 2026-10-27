@@ -79,9 +79,9 @@ exports.googleLoginController = async (req, res) => {
     res.status(200).json({ user: newUser, token });
   }
 };
-// edit user
+// edit user/admin (same for both)
 exports.userEditController = async (req, res) => {
-  console.log("Inside userEditController");
+  console.log("Inside user/adminEditController");
   const { id } = req.params;
   const email = req.payload;
   const { username, password, bio, picture, role } = req.body;
@@ -103,6 +103,14 @@ exports.userEditController = async (req, res) => {
   );
 
   res.status(200).json(updatedUser);
+};
+
+//get all users
+exports.getAllUsersController = async (req, res) => {
+  console.log("Inside getAllUsersController");
+  const email = req.payload;
+  const allUsers = await users.find({ email: { $ne: email } });
+  res.status(200).json(allUsers);
 };
 
 // edit admin

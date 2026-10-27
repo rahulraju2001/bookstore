@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getUserBoughtBooksAPI } from "../../services/allAPI";
 
 function Purchase() {
-  const [purchaseBooks, setPurchaseBooks] = [];
+  const [purchaseBooks, setPurchaseBooks] = useState([]);
 
   useEffect(() => {
     getBoughtBooks();

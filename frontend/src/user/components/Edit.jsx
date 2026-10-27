@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 function Edit() {
   const navigate = useNavigate()
   const [offCanvas, setOffCanvas] = useState(false);
-  const [userDetails, setUserDetails] = {
+  const [userDetails, setUserDetails] = useState({
     username: "",
     password: "",
     cPassword: "",
@@ -18,7 +18,7 @@ function Edit() {
     picture: "",
     role: "",
     id: "",
-  };
+  });
   const [existingPicture, setExistingPicture] = useState("");
   const [preview, setPreview] = useState("");
   const [passwordMatch, setPasswordMatch] = useState(true);
@@ -125,7 +125,7 @@ function Edit() {
               <FaX onClick={() => setOffCanvas(false)} />
             </div>
             {/* body */}
-            <cldiv className="flex justify-center items-center flex-col my-5">
+            <div className="flex justify-center items-center flex-col my-5">
               <label htmlFor="userProfile">
                 <input
                   onChange={(e) => handleFileUpload(e)}
@@ -249,7 +249,7 @@ function Edit() {
                   Update
                 </button>
               </div>
-            </cldiv>
+            </div>
           </div>
         </div>
       )}

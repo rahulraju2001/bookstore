@@ -20,32 +20,35 @@ axiosInstance.interceptors.request.use(
 )
 
 //response interceptors : Handling global error
+
 axiosInstance.interceptors.response.use(
-    (response)=>{
-        console.log("Response received!!!");
-        return response
-    },
-    (error)=>{
-        if(error.response){
-            const status = error.response.status
-            if(status==401){
-                console.log("Unauthorized Access")
-            }
-            else if(status==404){
-                console.log("API not found");
-            }
-            else if(status==500){
-                console.log("Server Error");
-            }else if(error.request){
-                console.log("No response from server");
-                return error.request.response
-            }else{
-                console.log(`Error: ${error.message}`);
-            }
-            return Promise.reject(error)
-        }
+  (response) => {
+    console.log("Response received:", response.status);
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      const status = error.response.status;
+
+      if (status === 401) {
+        console.log("Unauthorized access");
+      } else if (status === 403) {
+        console.log("Forbidden access");
+      } else if (status === 404) {
+        console.log("API not found");
+      } else if (status >= 500) {
+        console.log("Server error");
+      }
+    } else if (error.request) {
+      console.log("No response from server");
+    } else {
+      console.log("Request error:", error.message);
     }
-)
+
+    return Promise.reject(error);
+  }
+);
+
 
 export default axiosInstance
 

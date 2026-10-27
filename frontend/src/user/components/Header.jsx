@@ -80,7 +80,7 @@ function Header() {
               {dropDown && (
                 <div className="absolute right-0 z-10 mt-2 w-40 bg-white shadow rounded ring-1 ring-black/5 p-2 focus:outline-hidden">
                   <Link
-                    to={"/profile/${userId}"}
+                    to={`/profile/${userId}`}
                     className="flex items-center text-gray-600 text-sm px-3 py-2"
                   >
                     <FaGear className="me-1" /> Profile
@@ -132,7 +132,7 @@ function Header() {
               {dropDown && (
                 <div className="absolute right-0 z-10 mt-2 w-40 bg-white shadow rounded ring-1 ring-black/5 p-2 focus:outline-hidden">
                   <Link
-                    to={"/profile/${userId}"}
+                    to={`/profile/${userId}`}
                     className="flex items-center text-gray-600 text-sm px-3 py-2"
                   >
                     <FaGear className="me-1" /> Profile

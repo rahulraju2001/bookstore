@@ -32,7 +32,7 @@ const PORT = process.env.PORT
 
 //start server (listen)
 server.listen(PORT,()=>{
-    console.log("Server Started....");
+    console.log(`Server Started on port ${PORT}`);
 })
 
 //handling global errors in server using applicaton specific middleware

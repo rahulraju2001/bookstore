@@ -1,10 +1,13 @@
 import { FaBars } from "react-icons/fa";
 import Header from "../components/Header";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAllBooksAPI } from "../../services/allAPI";
+import { searchContext } from "../../contextAPI/ShareContext";
 
 function Books() {
+  const { searchKey, setSearchKey } = useContext(searchContext);
+
   const [toggle, setToggle] = useState(false);
   const [token, setToken] = useState("");
   const [allBooks, setAllBooks] = useState([]);
@@ -17,26 +20,29 @@ function Books() {
       setToken(userToken);
       getBooks();
     }
-  }, []);
+  }, [searchKey]);
 
   const getBooks = async () => {
-    const result = await getAllBooksAPI();
+    const result = await getAllBooksAPI(searchKey);
+    console.log(result.data);
+    
     if (result.status == 200) {
       setAllBooks(result.data);
       setDummyAllBooks(result.data);
       const temCategory = result.data.map((item) => item.category);
+      console.log("Categories:", temCategory);
       //to take only unique values
       setcategoryList([...new Set(temCategory)]);
     }
   };
 
-  const filterBooks = (category)=>{
-    if(category!='all'){
-      setAllBooks(dummyAllBooks?.filter(book=>book.category==category))
-    }else{
-      getBooks()
+  const filterBooks = (category) => {
+    if (category != "all") {
+      setAllBooks(dummyAllBooks?.filter((book) => book.category == category));
+    } else {
+      getBooks();
     }
-  }
+  };
 
   return (
     <>
@@ -47,6 +53,8 @@ function Books() {
             <h1 className="text-3xl font-bold my-5">All Books</h1>
             <div className="flex my-5">
               <input
+                value={searchKey}
+                onChange={(e) => setSearchKey(e.target.value)}
                 type="text"
                 className="p-2 border border-gray-200 w-100 rounded"
                 placeholder="search by book title"
@@ -72,20 +80,30 @@ function Books() {
               {/* filter category */}
               <div className={toggle ? "block" : "hidden md:block"}>
                 <div className="mt-3">
-                  <input onClick={()=>filterBooks('all')} type="radio" name="filter" id="no-filter" />
+                  <input
+                    onClick={() => filterBooks("all")}
+                    type="radio"
+                    name="filter"
+                    id="no-filter"
+                  />
                   <label htmlFor="no-filter" className="ms-3">
                     No Filter
                   </label>
                 </div>
                 {/* duplicate filter category */}
-                {categoryList?.map((category) => {
+                {categoryList?.map((category) => (
                   <div key={category} className="mt-3">
-                    <input onClick={()=>filterBooks(category)} type="radio" name="filter" id={category} />
+                    <input
+                      onClick={() => filterBooks(category)}
+                      type="radio"
+                      name="filter"
+                      id={category}
+                    />
                     <label htmlFor={category} className="ms-3">
                       {category}
                     </label>
-                  </div>;
-                })}
+                  </div>
+                ))}
               </div>
             </div>
             {/* Book Card */}

@@ -1,13 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminHeader from "../components/AdminHeader";
 import AdminSidebar from "../components/AdminSidebar";
 import UploadBook from "../../user/components/UploadBook";
 import BookStatus from "../../user/components/BookStatus";
 import Purchase from "../../user/components/Purchase";
+import { userListAPI } from "../../services/allAPI";
+import axiosInstance from "../../api/axiosInstance";
 
 function AdminResource() {
   const [currentTab, setCurrentTab] = useState(1);
+  const [allUsers, setAllUsers] = useState([]);
 
+  useEffect(() => {
+    if (currentTab == 2) {
+      getAllUsers();
+    }
+  }, [currentTab]);
+
+  const getAllUsers = async () => {
+    const result = await userListAPI();
+    if (result.statuus == 200) {
+      setAllUsers(result.data);
+    }
+  };
   return (
     <>
       <AdminHeader />
@@ -69,24 +84,43 @@ function AdminResource() {
             <div>
               <div className="md:grid grid-cols-4 md:my-0">
                 {/* Duplicating Card */}
-                <div className="shadow rounded p-2 m-2 bg-blue-100">
-                  <p className="text-red-500 font-bold text-md">ID:</p>
-                  <div className="flex mt-3 items-center">
-                    <img
-                      width={"80px"}
-                      height={"80px"}
-                      style={{ borderRadius: "50%" }}
-                      src="https://static.vecteezy.com/system/resources/previews/068/208/485/non_2x/user-profile-icon-simple-flat-grey-round-shape-social-media-profile-picture-symbol-user-account-dp-symbol-isolated-on-a-transparent-background-illustration-vector.jpg"
-                      alt="User"
-                    />
-                    <div className="flex flex-col ml-3 w-full">
-                      <h4 className="text-blue-600 font-bold text-md">
-                        Username
-                      </h4>
-                      <p className="text-xs">Mail</p>
+                {allUsers.length > 0 ? (
+                  allUsers?.map((user) => (
+                    <div
+                      key={user._id}
+                      className="shadow rounded p-2 m-2 bg-blue-100"
+                    >
+                      <p className="text-red-500 font-bold text-md">
+                        ID: {user._id}
+                      </p>
+                      <div className="flex mt-3 items-center">
+                        <img
+                          width={"80px"}
+                          height={"80px"}
+                          style={{ borderRadius: "50%" }}
+                          src={
+                            user?.picture == ""
+                              ? "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
+                              : user?.picture.startsWith(
+                                    "https://1h3.googleusercontent.com/",
+                                  )
+                                ? user?.picture
+                                : `${axiosInstance.defaults.baseURL}/uploads/${user?.picture}`
+                          }
+                          alt="User"
+                        />
+                        <div className="flex flex-col ml-3 w-full">
+                          <h4 className="text-blue-600 font-bold text-md">
+                            {user?.username}
+                          </h4>
+                          <p className="text-xs">{user?.mail}</p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  ))
+                ) : (
+                  <div></div>
+                )}
               </div>
             </div>
           )}

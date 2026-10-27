@@ -1,8 +1,107 @@
 import { FaPen } from "react-icons/fa";
 import AdminHeader from "../components/AdminHeader";
 import AdminSidebar from "../components/AdminSidebar";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axiosInstance from "../../api/axiosInstance";
+import { ToastContainer, toast } from "react-toastify";
+import { adminUpdateAPI } from "../../services/allAPI";
+
 
 function AdminSettings() {
+  const navigate = useNavigate();
+  const [offCanvas, setOffCanvas] = useState(false);
+  const [userDetails, setUserDetails] = useState({
+    username: "",
+    password: "",
+    cPassword: "",
+    bio: "",
+    picture: "",
+    role: "",
+    id: "",
+  });
+  const [existingPicture, setExistingPicture] = useState("");
+  const [preview, setPreview] = useState("");
+  const [passwordMatch, setPasswordMatch] = useState(true);
+  const [imageFile, setImageFile] = useState(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("user")) {
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      setUserDetails({
+        ...userDetails,
+        username: user.username,
+        role: user.role,
+        bio: user.bio,
+        id: user._id,
+      });
+      setExistingPicture(user.picture);
+    }
+  }, []);
+
+  const handleFileUpload = (e) => {
+    const imageFile = e.target.files[0];
+    //console.log(e.target.files[0]);
+    if (imageFile.type.startsWith("image/")) {
+      setUserDetails({ ...userDetails, picture: e.target.files[0] });
+      const url = URL.createObjectURL(e.target.files[0]);
+      setPreview(url);
+      setImageFile(true);
+    } else {
+      setImageFile(false);
+    }
+  };
+
+  const checkPassword = (data) => {
+    setUserDetails({ ...userDetails, cPassword: data });
+    userDetails.password === data
+      ? setPasswordMatch(true)
+      : setPasswordMatch(false);
+  };
+
+  const resetProfile = () => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    setUserDetails({
+      ...userDetails,
+      username: user.username,
+      role: user.role,
+      bio: user.bio,
+      id: user._id,
+    });
+    setExistingPicture(user.picture);
+    setPreview("");
+    setImageFile(false);
+    setPasswordMatch(true);
+  };
+
+  const handleUpdateUser = async () => {
+    const { username, password, cPassword, picture, id } = userDetails;
+    if (!username || !password || !cPassword) {
+      toast.info("please fill the form completely");
+    } else if (passwordMatch) {
+      const reqBody = new FormData();
+      for (let key in userDetails) {
+        if (key != "picture") {
+          reqBody.append(key, userDetails[key]);
+        } else {
+          preview
+            ? reqBody.append("picture", picture)
+            : reqBody.append("picture", existingPicture);
+        }
+      }
+      //api call
+      const result = await adminUpdateAPI(id, reqBody);
+      console.log(result);
+      if (result.status == 200) {
+        toast.success("admin profile updated successfully!! please login");
+        setTimeout(() => {
+          sessionStorage.clear();
+          navigate("/login");
+        }, 2500);
+      }
+    }
+  };
+
   return (
     <>
       <AdminHeader />
@@ -50,21 +149,82 @@ function AdminSettings() {
             {/* edit profile */}
             <div className="flex justify-center items-center flex-col m-10 bg-blue-100 p-5 rounded">
               <label htmlFor="userProfile">
-                <input type="file" id="userProfile" hidden />
-                <img style={{width:'200px',height:'200px',borderRadius:"50%"}}
+                <input
+                  onChange={(e) => handleFileUpload(e)}
+                  type="file"
+                  id="userProfile"
+                  hidden
+                />
+                {/* <img
+                  style={{
+                    width: "200px",
+                    height: "200px",
+                    borderRadius: "50%",
+                  }}
                   src="https://static.vecteezy.com/system/resources/previews/068/208/485/non_2x/user-profile-icon-simple-flat-grey-round-shape-social-media-profile-picture-symbol-user-account-dp-symbol-isolated-on-a-transparent-background-illustration-vector.jpg"
                   alt="User"
-                />
-                <button
+                /> */}
+                {existingPicture == "" ? (
+                  <img
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                    }}
+                    src={
+                      preview
+                        ? preview
+                        : "https://static.vecteezy.com/system/resources/previews/068/208/485/non_2x/user-profile-icon-simple-flat-grey-round-shape-social-media-profile-picture-symbol-user-account-dp-symbol-isolated-on-a-transparent-background-illustration-vector.jpg"
+                    }
+                    alt="User"
+                  />
+                ) : existingPicture.startsWith(
+                    "https://1h3.googleusercontent.com/",
+                  ) ? (
+                  <img
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                    }}
+                    src={preview ? preview : existingPicture}
+                    alt="user"
+                  />
+                ) : (
+                  <img
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                    }}
+                    src={
+                      preview
+                        ? preview
+                        : `${axiosInstance.defaults.baseURL}/uploads/${existingPicture}`
+                    }
+                    alt="no image"
+                  />
+                )}
+
+                {/* <button
                   className="bg-black text-white px-3 py-4 rounded z-53"
                   style={{ marginLeft: "250px", marginTop: "-29px" }}
                 >
                   <FaPen />
-                </button>
+                </button> */}
               </label>
+              {!imageFile && (
+                <div className="mt-5 text-yellow-800 text-sm">
+                  *Only accepts image file
+                </div>
+              )}
               {/* username */}
               <div className="mt-10 mb-3 w-full px-5">
                 <input
+                  value={userDetails.username}
+                  onChange={(e) =>
+                    setUserDetails({ ...userDetails, username: e.target.value })
+                  }
                   type="text"
                   placeholder="username"
                   className="w-full border border-gray-400 rounded p-2"
@@ -73,6 +233,10 @@ function AdminSettings() {
               {/* new password */}
               <div className="mt-3 mb-3 w-full px-5">
                 <input
+                  value={userDetails.password}
+                  onChange={(e) =>
+                    setUserDetails({ ...userDetails, password: e.target.value })
+                  }
                   type="text"
                   placeholder="New password"
                   className="w-full border border-gray-400 rounded p-2"
@@ -81,17 +245,24 @@ function AdminSettings() {
               {/* confirm password */}
               <div className="mt-3 mb-3 w-full px-5">
                 <input
+                  value={userDetails.cPassword}
+                  onChange={(e) => checkPassword(e.target.value)}
                   type="text"
                   placeholder="Confirm password"
                   className="w-full border border-gray-400 rounded p-2"
                 />
               </div>
+              {!passwordMatch && (
+                <div className="mt-5 text-yellow-800 text-sm">
+                  *Password not matching, enter correct password
+                </div>
+              )}
               {/* reset and update buttons */}
               <div className="flex justify-end w-full px-5 mt-5">
-                <button className="bg-yellow-500 text-white p-3 rounded me-2">
+                <button onClick={resetProfile} className="bg-yellow-500 text-white p-3 rounded me-2">
                   Reset
                 </button>
-                <button className="bg-green-500 text-white p-3 rounded">
+                <button onClick={handleUpdateUser} className="bg-green-500 text-white p-3 rounded">
                   Update
                 </button>
               </div>
@@ -99,6 +270,8 @@ function AdminSettings() {
           </div>
         </div>
       </div>
+      {/* Toast Container */}
+      <ToastContainer position="top-center" theme="colored" autoClose={3000} />
     </>
   );
 }

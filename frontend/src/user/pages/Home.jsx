@@ -1,11 +1,14 @@
 import { FaSearch } from "react-icons/fa";
 import Header from "../components/Header";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { getHomeBooksAPI } from "../../services/allAPI";
 import { searchContext } from "../../contextAPI/ShareContext";
+import { ToastContainer, toast } from "react-toastify";
+
 
 function Home() {
+  const navigate = useNavigate()
   const {searchKey,setSearchKey} = useContext(searchContext)
   const [homeBooks, setHomeBooks] = useState([]);
   console.log(searchKey);
@@ -20,6 +23,21 @@ function Home() {
   useEffect(() => {
     getHomeBooks();
   }, []);
+
+  const handleSearch =()=>{
+    if(!searchKey){
+      toast.warning("please input a book title")
+    }else if(!sessionStorage.getItem("token")){
+      toast.warning("please login to explore more")
+      setTimeout(()=>{
+        navigate('/login')
+      },2000)
+    }else if(searchKey && sessionStorage.getItem('token')){
+      navigate('/books')
+    }else{
+      toast.error("Something went wrong")
+    }
+  }
 
   return (
     <>
@@ -42,7 +60,7 @@ function Home() {
               placeholder="Search a Book"
               className="bg-white p-2 rounded-3xl w-100 text-black mt-2"
             />
-            <FaSearch
+            <FaSearch onClick={handleSearch}
               className="text-gray-500 cursor-pointer"
               style={{ marginTop: "-28px", marginLeft: "360px" }}
             />
@@ -141,6 +159,8 @@ function Home() {
           </p>
         </div>
       </section>
+      {/* Toast Container */}
+      <ToastContainer position="top-center" theme="colored" autoClose={3000} />
     </>
   );
 }

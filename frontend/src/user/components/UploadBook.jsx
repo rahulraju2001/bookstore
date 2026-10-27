@@ -25,15 +25,19 @@ function UploadBook() {
   console.log(bookDetails);
 
   const handleUploadImages = (e) => {
-    const imageFile = e.target.files[0];
-    const uploadedImageArray = bookDetails.uploadImages;
-    uploadedImageArray.push(imageFile);
-    setBookDetails({ ...bookDetails, uploadImages: uploadedImageArray });
+    const imageFile = e.target.files?.[0];
+    if (!imageFile || bookDetails.uploadImages.length >= 3) {
+      e.target.value = "";
+      return;
+    }
     const url = URL.createObjectURL(imageFile);
+    setBookDetails((prev) => ({
+      ...prev,
+      uploadImages: [...prev.uploadImages, imageFile],
+    }));
     setPreview(url);
-    const demoPreviewList = previewList;
-    demoPreviewList.push(url);
-    setPreviewList(demoPreviewList);
+    setPreviewList((prev) => [...prev, url]);
+    e.target.value = "";
   };
 
   const resetForm = () => {
@@ -86,26 +90,24 @@ function UploadBook() {
     ) {
       toast.info("Please fill the form completely");
     } else {
-      //api call
-      toast.success("API Call");
       const reqBody = new FormData();
-      for (let key in bookDetails) {
-        if (key != uploadImages) {
+      for (const key in bookDetails) {
+        if (key !== "uploadImages") {
           reqBody.append(key, bookDetails[key]);
         } else {
-          bookDetails.uploadImages.forEach(imageFile=>{
-            reqBody.append("uploadImages",imageFile)
-          })
+          bookDetails.uploadImages.forEach((imageFile) => {
+            reqBody.append("uploadImages", imageFile);
+          });
         }
       }
-      const result = await addBookAPI(reqBody)
+      const result = await addBookAPI(reqBody);
       console.log(result);
-      if(result==201){
-        toast.success("Book Added successfully")
-      }else{
-        toast.warning(result.response)
+      if (result.status === 201) {
+        toast.success("Book Added successfully");
+        resetForm();
+      } else {
+        toast.warning(result.response?.data || "Failed to add book");
       }
-      resetForm()
     }
   };
 
@@ -265,15 +267,16 @@ function UploadBook() {
           {/* preview of uploaded books */}
           {preview && (
             <div className="flex justify-center items-center">
-              {previewList?.map((imageURL, index) => {
+              {previewList.map((imageURL, index) => (
                 <img
                   key={`${imageURL}-${index}`}
                   width={"70px"}
                   className="mx-2"
                   height={"70px"}
                   src={imageURL}
-                />;
-              })}
+                  alt={`Book preview ${index + 1}`}
+                />
+              ))}
               {previewList.length < 3 && (
                 <label htmlFor="bookUpload">
                   <input

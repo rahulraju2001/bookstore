@@ -31,8 +31,8 @@ export const getHomeBooksAPI = async () => {
 };
 
 //get all book api: book component when page loads
-export const getAllBooksAPI = async () => {
-  return await apiService("GET", `/all-books`,{});
+export const getAllBooksAPI = async (searchKey) => {
+  return await apiService("GET", `/all-books?search=${searchKey}`,{});
 };
 
 //get user book api: BookStatus component when it opens
@@ -48,4 +48,24 @@ export const getUserBoughtBooksAPI = async () => {
 //delete user uploaded books api: bookStatus component when click on delete button
 export const deleteUserBookAPI = async (bookId) => {
   return await apiService("DELETE", `/book/${bookId}`,{});
+};
+
+//view-book/:id
+export const viewBookAPI = async (id) => {
+  return await apiService("GET", `/view-book/${id}`,{});
+};
+
+//buy book
+export const buyBookAPI = async (id) => {
+  return await apiService("PUT", `/books/${id}/buy`,{});
+};
+
+//edit admin api: called by admin settings component when edit button is clicked
+export const adminUpdateAPI = async (adminId,adminData) => {
+  return await apiService("PUT", `/admin/${adminId}`, adminData);
+};
+
+//get all users api: called by admin resources component
+export const userListAPI = async () => {
+  return await apiService("GET", `/user-list`,{});
 };
