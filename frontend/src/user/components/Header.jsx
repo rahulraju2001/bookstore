@@ -8,10 +8,11 @@ import {
 } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
-import { Link } from "react-router-dom";
-import axiosInstance from '../../api/axiosInstance'
+import { Link, useNavigate } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 function Header() {
+  const navigate = useNavigate();
   const [toggle, setToggle] = useState(false);
   const [token, setToken] = useState("");
   const [dp, setDp] = useState("");
@@ -27,6 +28,16 @@ function Header() {
       setUserId(user._id);
     }
   }, [token]);
+
+  const logout =()=>{
+    sessionStorage.clear()
+    setToggle(false)
+    setToken("")
+    setDp("")
+    setUserId("")
+    setDropDown(false)
+    navigate('/')
+  }
 
   return (
     <>
@@ -71,7 +82,9 @@ function Header() {
                   src={
                     dp == ""
                       ? "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
-                      : dp.startsWith("https://1h3.googleusercontent.com/")?dp : `${axiosInstance.defaults.baseURL}/uploads/${dp}`
+                      : dp.startsWith("https://1h3.googleusercontent.com/")
+                        ? dp
+                        : `${axiosInstance.defaults.baseURL}/uploads/${dp}`
                   }
                   alt="profile icon"
                 />
@@ -85,7 +98,7 @@ function Header() {
                   >
                     <FaGear className="me-1" /> Profile
                   </Link>
-                  <button className="flex items-center text-gray-600 text-sm px-3 py-2">
+                  <button onClick={logout} className="flex items-center text-gray-600 text-sm px-3 py-2">
                     <FaPowerOff className="me-1" />
                     Logout
                   </button>
@@ -123,7 +136,9 @@ function Header() {
                   src={
                     dp == ""
                       ? "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
-                      : dp.startsWith("https://1h3.googleusercontent.com/")?dp : `${axiosInstance.defaults.baseURL}/uploads/${dp}`
+                      : dp.startsWith("https://1h3.googleusercontent.com/")
+                        ? dp
+                        : `${axiosInstance.defaults.baseURL}/uploads/${dp}`
                   }
                   alt="profile icon"
                 />
@@ -137,7 +152,7 @@ function Header() {
                   >
                     <FaGear className="me-1" /> Profile
                   </Link>
-                  <button className="flex items-center text-gray-600 text-sm px-3 py-2">
+                  <button onClick={logout} className="flex items-center text-gray-600 text-sm px-3 py-2">
                     <FaPowerOff className="me-1" />
                     Logout
                   </button>

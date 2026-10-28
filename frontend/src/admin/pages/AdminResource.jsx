@@ -4,18 +4,31 @@ import AdminSidebar from "../components/AdminSidebar";
 import UploadBook from "../../user/components/UploadBook";
 import BookStatus from "../../user/components/BookStatus";
 import Purchase from "../../user/components/Purchase";
-import { userListAPI } from "../../services/allAPI";
+import { editBookStatusAPI, userListAPI } from "../../services/allAPI";
 import axiosInstance from "../../api/axiosInstance";
+import { updateBookStatusController } from "../../../../backend/controllers/bookController";
+import { ToastContainer, toast } from "react-toastify";
+
 
 function AdminResource() {
   const [currentTab, setCurrentTab] = useState(1);
   const [allUsers, setAllUsers] = useState([]);
+  const [allBooks, setAllBooks] = useState([]);
 
   useEffect(() => {
     if (currentTab == 2) {
       getAllUsers();
+    } else {
+      getAllBooks();
     }
   }, [currentTab]);
+
+  const getAllBooks = async () => {
+    const result = await bookListAPI();
+    if (result.statuus == 200) {
+      setAllBooks(result.data);
+    }
+  };
 
   const getAllUsers = async () => {
     const result = await userListAPI();
@@ -23,6 +36,15 @@ function AdminResource() {
       setAllUsers(result.data);
     }
   };
+
+  const updateBookStatus = async (id) =>{
+    const result = await editBookStatusAPI(id)
+    if(result.status==200){
+      toast.success("Book Approved Successfully")
+      getAllBooks()
+    }
+  }
+
   return (
     <>
       <AdminHeader />
@@ -61,23 +83,37 @@ function AdminResource() {
           {currentTab == 1 && (
             <div className="md:grid grid-cols-4 md:my-0">
               {/* Duplicating Card */}
-              <div className="shadow rounded p-3 m-4 md:my-0">
-                <img
-                  width={"100%"}
-                  height={"300px"}
-                  src="https://blog-cdn.reedsy.com/directories/gallery/248/large_65b0ae90317f7596d6f95bfdd6131398.jpg"
-                  alt=""
-                />
-                <div className="flex flex-col justify-center items-center mt-4">
-                  <h2 className="text-blue-950 font-bold text-xl">Author</h2>
-                  <h3 className="text-lg">Title</h3>
-                  <p className="font-bold text-red-950">Price</p>
-                  {/* approve button */}
-                  <button className="bg-green-600 text-white p-2 mt-2 w-fit">
-                    Approve
-                  </button>
-                </div>
-              </div>
+              {allBooks.length > 0 ? (
+                allBooks?.map((book) => (
+                  <div className="shadow rounded p-3 m-4 md:my-0">
+                    <img
+                      width={"100%"}
+                      height={"300px"}
+                      src={book?.imageURL}
+                      alt=""
+                    />
+                    <div className="flex flex-col justify-center items-center mt-4">
+                      <h2 className="text-blue-950 font-bold text-xl">
+                        {book?.author}
+                      </h2>
+                      <h3 className="text-lg">{book?.title}</h3>
+                      <p className="font-bold text-red-950">${book?.price}</p>
+                      {/* approve button */}
+                      {
+                        book?.status=="pending" ?
+                        <button onClick={()=>updateBookStatus(book?._id)} className="bg-green-600 text-white p-2 mt-2 w-fit">
+                        Approve
+                      </button>
+                      :
+                      <img width={'50%'} className="mt-2" src="https://png.pngtree.com/png-clipart/20200225/original/pngtree-green-check-mark-icon-flat-style-png-image_5253210.jpg" alt="checked...." />
+                      }
+
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div>Sorry no books added yet!!!!</div>
+              )}
             </div>
           )}
           {currentTab == 2 && (
@@ -126,6 +162,8 @@ function AdminResource() {
           )}
         </div>
       </div>
+      {/* Toast Container */}
+      <ToastContainer position="top-center" theme="colored" autoClose={3000} />
     </>
   );
 }
