@@ -79,3 +79,8 @@ export const bookListAPI = async () => {
 export const editBookStatusAPI = async (id) => {
   return await apiService("PUT", `/book/${id}`,{});
 };
+
+//get bookdetails from AI
+export const getBookDetailsAIAPI = async (title) => {
+  return await apiService("POST", `/book-ai`,title);
+};

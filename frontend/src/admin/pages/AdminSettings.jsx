@@ -2,7 +2,7 @@ import { FaPen } from "react-icons/fa";
 import AdminHeader from "../components/AdminHeader";
 import AdminSidebar from "../components/AdminSidebar";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosInstance";
 import { ToastContainer, toast } from "react-toastify";
 import { adminUpdateAPI } from "../../services/allAPI";

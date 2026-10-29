@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FaUserAlt, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
@@ -7,10 +7,12 @@ import { registerAPI, loginAPI, googleLoginAPI } from "../services/allAPI";
 import { ToastContainer, toast } from "react-toastify";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { routeContext } from "../contextAPI/RouteGuard";
 
 function Auth({ insideRegister }) {
   const navigate = useNavigate();
   const [togglePassword, setTogglePassword] = useState(false);
+  const {role, setRole, authorisedUser, setAuthorisedUser} = useContext(routeContext)
 
   const formik = useFormik({
     //since same component is used for both register and login, username: "Username" is necessary instead of "", bcs "" will lead to error since login doesnt have username field
@@ -48,10 +50,13 @@ function Auth({ insideRegister }) {
       toast.success("Successfully Logged In....");
       sessionStorage.setItem("token", result.data.token);
       sessionStorage.setItem("user", JSON.stringify(result.data.user));
+      setAuthorisedUser(true)
       setTimeout(() => {
         if (result.data.user.role == "admin") {
+          setRole("admin")
           navigate("/admin");
         } else {
+          setRole("user")
           navigate("/");
         }
       }, 2500);
@@ -86,10 +91,13 @@ function Auth({ insideRegister }) {
       toast.success("Login Successfull");
       sessionStorage.setItem("token", result.data.token);
       sessionStorage.setItem("user", JSON.stringify(result.data.user));
+      setAuthorisedUser(true)
       setTimeout(() => {
         if (result.data.user.role == "admin") {
+          setRole("admin")
           navigate("/admin");
         } else {
+          setRole("user")
           navigate("/");
         }
       }, 2500);

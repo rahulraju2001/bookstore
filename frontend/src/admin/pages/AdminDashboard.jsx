@@ -1,9 +1,7 @@
-import { FaBook, FaUser, FaUsers } from "react-icons/fa";
+import { FaBook, FaUsers } from "react-icons/fa";
 import AdminHeader from "../components/AdminHeader";
 import AdminSidebar from "../components/AdminSidebar";
 import { FaPeopleGroup } from "react-icons/fa6";
-// import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-// import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -15,53 +13,57 @@ import {
   Tooltip,
   Pie,
   PieChart,
+  BarChart,
+  Bar,
+  Legend,
 } from "recharts";
+import { generateMockData } from "@recharts/devtools";
 
 function AdminDashboard() {
-  const data = [
-    {
-      name: "Page A",
-      uv: 4000,
-      pv: 2400,
-      amt: 2400,
-    },
-    {
-      name: "Page B",
-      uv: 3000,
-      pv: 1398,
-      amt: 2210,
-    },
-    {
-      name: "Page C",
-      uv: 2000,
-      pv: 9800,
-      amt: 2290,
-    },
-    {
-      name: "Page D",
-      uv: 2780,
-      pv: 3908,
-      amt: 2000,
-    },
-    {
-      name: "Page E",
-      uv: 1890,
-      pv: 4800,
-      amt: 2181,
-    },
-    {
-      name: "Page F",
-      uv: 2390,
-      pv: 3800,
-      amt: 2500,
-    },
-    {
-      name: "Page G",
-      uv: 3490,
-      pv: 4300,
-      amt: 2100,
-    },
-  ];
+  // const data = [
+  //   {
+  //     name: "Page A",
+  //     uv: 4000,
+  //     pv: 2400,
+  //     amt: 2400,
+  //   },
+  //   {
+  //     name: "Page B",
+  //     uv: 3000,
+  //     pv: 1398,
+  //     amt: 2210,
+  //   },
+  //   {
+  //     name: "Page C",
+  //     uv: 2000,
+  //     pv: 9800,
+  //     amt: 2290,
+  //   },
+  //   {
+  //     name: "Page D",
+  //     uv: 2780,
+  //     pv: 3908,
+  //     amt: 2000,
+  //   },
+  //   {
+  //     name: "Page E",
+  //     uv: 1890,
+  //     pv: 4800,
+  //     amt: 2181,
+  //   },
+  //   {
+  //     name: "Page F",
+  //     uv: 2390,
+  //     pv: 3800,
+  //     amt: 2500,
+  //   },
+  //   {
+  //     name: "Page G",
+  //     uv: 3490,
+  //     pv: 4300,
+  //     amt: 2100,
+  //   },
+  // ];
 
   const data01 = [
     { name: "Group A", value: 400 },
@@ -82,10 +84,13 @@ function AdminDashboard() {
     { name: "D1", value: 150 },
     { name: "D2", value: 50 },
   ];
+
+  const data = generateMockData(6, 823);
+
   return (
     <>
       <AdminHeader />
-      <div className="md:grid grid-5 gap-2">
+      <div className="md:grid grid-cols-5 gap-2">
         <div className="col-span-1">
           <AdminSidebar />
         </div>
@@ -122,20 +127,15 @@ function AdminDashboard() {
             <div>
               {/* Book purchase ratio - Barchart */}
               <ResponsiveContainer width={"100%"} height={"300"}>
-                <AreaChart data={data}>
-                  <XAxis dataKey="name" />
-                  <YAxis width="auto" />
+                <BarChart data={data}>
                   <CartesianGrid />
+                  <XAxis dataKey="label" />
+                  <YAxis width="auto" />
                   <Tooltip />
-                  <ReferenceLine x="Page C" stroke="green" label="Min PAGE" />
-                  <ReferenceLine
-                    y={4000}
-                    label="Max"
-                    stroke="red"
-                    strokeDasharray="3 3"
-                  />
-                  <Area type="monotone" dataKey="uv" />
-                </AreaChart>
+                  <Legend />
+                  <Bar dataKey="x" radius={[10, 10, 0, 0]} />
+                  <Bar dataKey="y" radius={[10, 10, 0, 0]} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
             <div>

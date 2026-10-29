@@ -10,8 +10,12 @@ import { FaGear } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
+import { routeContext } from "../../contextAPI/RouteGuard";
 
 function Header() {
+  const { role, setRole, authorisedUser, setAuthorisedUser } =
+    useContext(routeContext);
+
   const navigate = useNavigate();
   const [toggle, setToggle] = useState(false);
   const [token, setToken] = useState("");
@@ -29,15 +33,16 @@ function Header() {
     }
   }, [token]);
 
-  const logout =()=>{
-    sessionStorage.clear()
-    setToggle(false)
-    setToken("")
-    setDp("")
-    setUserId("")
-    setDropDown(false)
-    navigate('/')
-  }
+  const logout = () => {
+    sessionStorage.clear();
+    setAuthorisedUser("false")
+    setToggle(false);
+    setToken("");
+    setDp("");
+    setUserId("");
+    setDropDown(false);
+    navigate("/");
+  };
 
   return (
     <>
@@ -98,7 +103,10 @@ function Header() {
                   >
                     <FaGear className="me-1" /> Profile
                   </Link>
-                  <button onClick={logout} className="flex items-center text-gray-600 text-sm px-3 py-2">
+                  <button
+                    onClick={logout}
+                    className="flex items-center text-gray-600 text-sm px-3 py-2"
+                  >
                     <FaPowerOff className="me-1" />
                     Logout
                   </button>
@@ -152,7 +160,10 @@ function Header() {
                   >
                     <FaGear className="me-1" /> Profile
                   </Link>
-                  <button onClick={logout} className="flex items-center text-gray-600 text-sm px-3 py-2">
+                  <button
+                    onClick={logout}
+                    className="flex items-center text-gray-600 text-sm px-3 py-2"
+                  >
                     <FaPowerOff className="me-1" />
                     Logout
                   </button>

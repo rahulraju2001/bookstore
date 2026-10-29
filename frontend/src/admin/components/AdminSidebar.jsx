@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaChartBar, FaDatabase } from "react-icons/fa"
 import { FaGear } from "react-icons/fa6"
 import { Link } from "react-router-dom"
@@ -31,7 +31,7 @@ function AdminSidebar() {
           } alt="Admin" />
       </div>
       {/* name */}
-      <h3 className="text-xl font-bold my-5 text-center">Name</h3>
+      <h3 className="text-xl font-bold my-5 text-center">{username}</h3>
       {/* links */}
       <div className="mt-10 flex flex-col justify-center items-center">
         <div className="mt-3">

@@ -1,19 +1,35 @@
 import { useEffect, useState } from "react";
 import AdminHeader from "../components/AdminHeader";
 import AdminSidebar from "../components/AdminSidebar";
-import UploadBook from "../../user/components/UploadBook";
-import BookStatus from "../../user/components/BookStatus";
-import Purchase from "../../user/components/Purchase";
-import { editBookStatusAPI, userListAPI } from "../../services/allAPI";
+// import UploadBook from "../../user/components/UploadBook";
+// import BookStatus from "../../user/components/BookStatus";
+// import Purchase from "../../user/components/Purchase";
+import {
+  bookListAPI,
+  editBookStatusAPI,
+  userListAPI,
+} from "../../services/allAPI";
 import axiosInstance from "../../api/axiosInstance";
-import { updateBookStatusController } from "../../../../backend/controllers/bookController";
 import { ToastContainer, toast } from "react-toastify";
-
 
 function AdminResource() {
   const [currentTab, setCurrentTab] = useState(1);
   const [allUsers, setAllUsers] = useState([]);
   const [allBooks, setAllBooks] = useState([]);
+
+  const getAllBooks = async () => {
+    const result = await bookListAPI();
+    if (result.status == 200) {
+      setAllBooks(result.data);
+    }
+  };
+
+  const getAllUsers = async () => {
+    const result = await userListAPI();
+    if (result.status == 200) {
+      setAllUsers(result.data);
+    }
+  };
 
   useEffect(() => {
     if (currentTab == 2) {
@@ -23,27 +39,13 @@ function AdminResource() {
     }
   }, [currentTab]);
 
-  const getAllBooks = async () => {
-    const result = await bookListAPI();
-    if (result.statuus == 200) {
-      setAllBooks(result.data);
+  const updateBookStatus = async (id) => {
+    const result = await editBookStatusAPI(id);
+    if (result.status == 200) {
+      toast.success("Book Approved Successfully");
+      getAllBooks();
     }
   };
-
-  const getAllUsers = async () => {
-    const result = await userListAPI();
-    if (result.statuus == 200) {
-      setAllUsers(result.data);
-    }
-  };
-
-  const updateBookStatus = async (id) =>{
-    const result = await editBookStatusAPI(id)
-    if(result.status==200){
-      toast.success("Book Approved Successfully")
-      getAllBooks()
-    }
-  }
 
   return (
     <>
@@ -99,15 +101,21 @@ function AdminResource() {
                       <h3 className="text-lg">{book?.title}</h3>
                       <p className="font-bold text-red-950">${book?.price}</p>
                       {/* approve button */}
-                      {
-                        book?.status=="pending" ?
-                        <button onClick={()=>updateBookStatus(book?._id)} className="bg-green-600 text-white p-2 mt-2 w-fit">
-                        Approve
-                      </button>
-                      :
-                      <img width={'50%'} className="mt-2" src="https://png.pngtree.com/png-clipart/20200225/original/pngtree-green-check-mark-icon-flat-style-png-image_5253210.jpg" alt="checked...." />
-                      }
-
+                      {book?.status == "pending" ? (
+                        <button
+                          onClick={() => updateBookStatus(book?._id)}
+                          className="bg-green-600 text-white p-2 mt-2 w-fit"
+                        >
+                          Approve
+                        </button>
+                      ) : (
+                        <img
+                          width={"50%"}
+                          className="mt-2"
+                          src="https://png.pngtree.com/png-clipart/20200225/original/pngtree-green-check-mark-icon-flat-style-png-image_5253210.jpg"
+                          alt="checked...."
+                        />
+                      )}
                     </div>
                   </div>
                 ))
