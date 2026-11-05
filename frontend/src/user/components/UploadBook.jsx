@@ -22,22 +22,31 @@ function UploadBook() {
 
   const [preview, setPreview] = useState("");
   const [previewList, setPreviewList] = useState([]);
-  const debounceTitleSearch = useDebounce(bookDetails,1000)
+  const debounceTitleSearch = useDebounce(bookDetails.title, 1000);
 
-
-  const generateBookAbstractAI = async (debounceTitleSearch)=>{
-    console.log(debounceTitleSearch);
-    const result = await getBookDetailsAIAPI(debounceTitleSearch)
-    console.log(result.data);
-    setBookDetails({...bookDetails,abstract:result.data})
-  }
-
-  useEffect(()=>{
-    if(debounceTitleSearch){
-      console.log("Gemini API call");
-      generateBookAbstractAI()
+  const generateBookAbstractAI = async () => {
+    try {
+      const result = await getBookDetailsAIAPI(debounceTitleSearch);
+      console.log("API Response:", result.data);
+      if (result.data?.content) {
+        setBookDetails({ ...bookDetails, abstract: result.data });
+      } else {
+        console.error("Abstract not found in API response:", result.data);
+      }
+    } catch (error) {
+      console.error(
+        "Error generating book abstract:",
+        error.response?.data || error.message,
+      );
     }
-  },[debounceTitleSearch])
+  };
+
+  useEffect(() => {
+    if (debounceTitleSearch) {
+      console.log("Gemini API call");
+      generateBookAbstractAI();
+    }
+  }, [debounceTitleSearch]);
 
   //console.log(bookDetails);
 

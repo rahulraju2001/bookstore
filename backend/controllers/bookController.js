@@ -167,11 +167,21 @@ exports.generateAbstractAIController = async (req, res) => {
   const result = await model.generateContent(
     `Give me a short Abstract, author name of the book ${title} in json format`,
   );
-  const replay = result.response;
-  console.log(replay);
+  let replay = result.response.candidates[0].content.parts[0].text;
+
+  //Remove markdown code fences
+  replay = replay.replace(/```json```/g, "").trim();
+
+  //Convert string into JSON
+  const bookData = JSON.parse(replay);
+  console.log(bookdata);
+
+  //Extract abstract
+  const abstract = bookData.abstract;
+
   res.status(200).json({
     success: true,
     user: title,
-    content: replay.candidates[0].content.parts[0].text,
+    content: abstract
   });
 };
