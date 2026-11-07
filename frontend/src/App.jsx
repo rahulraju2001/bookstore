@@ -17,8 +17,8 @@ import Pnf from "./pages/Pnf";
 import Preloader from "./components/Preloader";
 import Footer from "./components/Footer";
 import { useContext, useState } from "react";
-import PaymentSuccess from "./user/pages/paymentSuccess";
-import PaymentFail from "./user/pages/paymentFail";
+import PaymentSuccess from "./user/pages/PaymentSuccess";
+import PaymentFail from "./user/pages/PaymentFail";
 import { routeContext } from "./contextAPI/RouteGuard";
 
 function App() {
